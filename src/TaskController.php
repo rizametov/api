@@ -5,10 +5,15 @@ class TaskController
     public function processRequest(string $method, ?string $id): void
     {
         if (null === $id) {
-            if ($method === 'GET') {
-                echo 'index' . PHP_EOL;
-            } elseif ($method === 'POST') {
-                echo 'create' . PHP_EOL;
+            switch ($method) {
+                case 'GET':
+                    echo 'index' . PHP_EOL;
+                    break;
+                case 'POST':
+                    echo 'create' . PHP_EOL;
+                    break;
+                default:
+                    $this->respondMethodNotAllowed('GET, POST');
             }
         } else {
             switch ($method) {
@@ -21,7 +26,16 @@ class TaskController
                 case 'DELETE':
                     echo 'delete ' . $id;
                     break; 
+                default:
+                    $this->respondMethodNotAllowed('GET, PATCH, DELETE');
             }
         }
     }
+
+    private function respondMethodNotAllowed(string $allowedMethods): void
+    {
+        http_response_code(405);
+
+        header('Allow: ' . $allowedMethods);
+    } 
 }
