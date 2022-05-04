@@ -28,12 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindValue(':api_key', $apiKey, PDO::PARAM_STR);
 
     $stmt->execute();
-
-    echo 'Registration completed successfully';
-    echo '<br>';
-    echo 'Your Api Key: ', $apiKey;
-
-    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -46,6 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <main class="container">
         <h1>Register</h1>
+        <p>
+            Your API Key: <strong><?php echo $apiKey ?? 'Key not generated yet'; ?></strong>
+        </p>
         <form method="post">
             <label for="name">
                 Name
@@ -59,9 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Password
                 <input type="password" name="password" id="password">
             </label>
-            <button>Register</button>
+            <button <?php echo !empty($apiKey) ? 'disabled' : ''; ?>>Register</button>
         </form>
     </main>
 </body>
 </html>
-
