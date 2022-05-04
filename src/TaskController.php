@@ -2,14 +2,14 @@
 
 class TaskController
 {
-    public function __construct(private TaskGateway $gateway) {}
+    public function __construct(private TaskGateway $gateway, private int $userId) {}
 
     public function processRequest(string $method, ?string $id): void
     {
         if (null === $id) {
             switch ($method) {
                 case 'GET':
-                    echo json_encode($this->gateway->all());
+                    echo json_encode($this->gateway->all($this->userId));
                     
                     break;
                 case 'POST':
@@ -20,14 +20,14 @@ class TaskController
                         return;   
                     }
 
-                    $this->respondCreated($this->gateway->create($data));
+                    $this->respondCreated($this->gateway->create($this->userId, $data));
                     
                     break;
                 default:
                     $this->respondMethodNotAllowed('GET, POST');
             }
         } else {
-            if (false === $task = $this->gateway->get($id)) {
+            if (false === $task = $this->gateway->get($this->userId, $id)) {
                 $this->respondNotFound($id);
                 return;
             }
@@ -47,14 +47,14 @@ class TaskController
 
                     echo json_encode([
                         'massage' => 'Task updated', 
-                        'rows' => $this->gateway->update($id, $data)
+                        'rows' => $this->gateway->update($this->userId, $id, $data)
                     ]);
 
                     break;
                 case 'DELETE':
                     echo json_encode([
                         'message' => 'Taks deleted',
-                        'rows' => $this->gateway->delete($id)
+                        'rows' => $this->gateway->delete($this->userId, $id)
                     ]);
 
                     break;
