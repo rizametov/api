@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-require '../src/bootstrap.php';
+require '../bootstrap.php';
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -17,6 +17,8 @@ $database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $
 $userGateway = new UserGateway($database);
 
 $auth = new Auth($userGateway);
+
+// if (false === $auth->authenticateAPIKey()) exit;
 
 if (false === $auth->authenticateAccessToken()) exit;
 
