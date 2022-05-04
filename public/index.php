@@ -18,7 +18,7 @@ $userGateway = new UserGateway($database);
 
 $auth = new Auth($userGateway);
 
-if (false === $auth->authenticateAPIKey()) exit;
+if (false === $auth->authenticateAccessToken()) exit;
 
 $taskGateway = new TaskGateway($database);
 $taskController = new TaskController($taskGateway, $auth->getUserId());

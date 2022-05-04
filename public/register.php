@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="container">
         <h1>Register</h1>
         <p>
-            Your API Key: <strong><?php echo $apiKey ?? 'Key not generated yet'; ?></strong>
+            Your API Key: <?php echo $apiKey ?? 'Key not generated yet'; ?>
         </p>
         <form method="post">
             <label for="name">
