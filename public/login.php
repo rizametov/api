@@ -40,6 +40,16 @@ if (false === password_verify($postParams['password'], $user['password_hash'])) 
 // echo json_encode(['access_token' => base64_encode(json_encode(['id' => $user['id'], 'name' => $user['name']]))]);
 
 // Generate JWT
+$codec = new JWTCodec($_ENV['SECRET_KEY']);
+
+$refreshTokenExpiry = time() + 432000;
+$refreshToken = $codec->encode(['sub' => $user['id'], 'exp' => $refreshTokenExpiry]);
+
 echo json_encode([
-    'jwt_token' => (new JWTCodec($_ENV['SECRET_KEY']))->encode(['sub' => $user['id'], 'name' => $user['name']])
+    'jwt_token' => $codec->encode(['sub' => $user['id'], 'name' => $user['name'], 'exp' => time() + 30]),
+    'refresh_token' => $refreshToken
 ]);
+
+$refreshTokenGateway = new RefreshTokenGateway($database, $_ENV['SECRET_KEY']);
+
+$refreshTokenGateway->create($refreshToken, $refreshTokenExpiry);

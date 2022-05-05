@@ -4,7 +4,7 @@ class UserGateway
 {
     private PDO $connection;
 
-    private const USERS_TABLE = 'user';
+    private const USERS_TABLE = 'users';
 
     public function __construct(Database $database)
     {
@@ -35,5 +35,18 @@ class UserGateway
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    } 
+    }
+
+    public function getById(int $id): array|false
+    {
+        $sql = sprintf('SELECT * FROM %s WHERE id = :id', self::USERS_TABLE);
+
+        $stmt = $this->connection->prepare($sql);
+
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
