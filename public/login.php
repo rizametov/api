@@ -36,6 +36,10 @@ if (false === password_verify($postParams['password'], $user['password_hash'])) 
     exit;
 }
 
-$payload = ['id' => $user['id'], 'name' => $user['name']];
+// Generate Access token
+// echo json_encode(['access_token' => base64_encode(json_encode(['id' => $user['id'], 'name' => $user['name']]))]);
 
-echo json_encode(['access_token' => base64_encode(json_encode($payload))]);
+// Generate JWT
+echo json_encode([
+    'jwt_token' => (new JWTCodec($_ENV['SECRET_KEY']))->encode(['sub' => $user['id'], 'name' => $user['name']])
+]);

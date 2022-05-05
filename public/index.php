@@ -18,9 +18,15 @@ $userGateway = new UserGateway($database);
 
 $auth = new Auth($userGateway);
 
+// Auth by API Key
 // if (false === $auth->authenticateAPIKey()) exit;
 
-if (false === $auth->authenticateAccessToken()) exit;
+// Auth by Access Token
+// if (false === $auth->authenticateAccessToken()) exit;
+
+// Auth by JWT 
+$auth->setJWTCodec(new JWTCodec($_ENV['SECRET_KEY']));
+if (false === $auth->authenticateJWT()) exit;
 
 $taskGateway = new TaskGateway($database);
 $taskController = new TaskController($taskGateway, $auth->getUserId());

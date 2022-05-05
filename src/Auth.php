@@ -4,6 +4,8 @@ class Auth
 {
     private int $userId;
 
+    private JWTCodec $codec;
+
     public function __construct(private UserGateway $gateway) {}
 
     public function authenticateAPIKey(): bool
@@ -53,6 +55,39 @@ class Auth
         $this->userId = $data['id'];
 
         return true;
+    }
+
+    public function authenticateJWT(): bool
+    {
+        if (! preg_match('/^Bearer\s+(?P<token>.*)$/', $_SERVER['HTTP_AUTHORIZATION'] ?? '', $match)) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Incomplete authorization header']);
+            
+            return false;
+        }
+        
+        try {
+            $data = $this->codec->decode($match['token']);
+        } catch (InvalidSignatureException) {
+            http_response_code(401);
+            echo json_encode(['message' => 'Invalid signature']);
+
+            return false;
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode(['message' => $e->getMessage()]);
+
+            return false;
+        }
+
+        $this->userId = $data['sub'];
+
+        return true;
+    }
+
+    public function setJWTCodec(JWTCodec $codec): void
+    {
+        $this->codec = $codec;
     }
 
     public function getUserId(): int
